@@ -1,26 +1,221 @@
 ---
-title: "protocol_Cc"
-format: html
-editor: visual
+title: "Critical Time for Weed Removal with Cover Crop and Premergence herbicides in Soybeans"
+author: "Maxwel Coura Oliveira, PhD"
+format: 
+  pdf:
+    include-in-header:
+      - text: |
+          \definecolor{tomato}{HTML}{FF6347}
+          \definecolor{gold}{HTML}{FFD700}
+          \definecolor{offwhite}{HTML}{FAF9F6}
+          \definecolor{beige}{HTML}{F5F5DC}
+          \pagecolor{offwhite}
+    fontfamily: libertinus
+    fontfamilyoptions:
+     - osf
+     - p
+    geometry:
+     - top=30mm
+     - left=20mm
+     - heightrounded
+editor: source
+execute:
+  echo: false
+  message: false
+  warning: false
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
 ```{r}
-1 + 1
+library(tidyverse)
+library(flextable)
+library(timevis)
 ```
 
-You can add options to executable code like this
+
+
+## Objective
+
+The objective of this study is to investigate and compare the best timing for weed removal in soybean using two different weed management approaches, cover crops and pre-emergence herbicide.
+
+
+
+## Methods
+
+### Plant material
+
+The study would be conducted at Emile A. Lods Agronomy Research Centre. The study is arranged in a split plot design. The main plot are weed management practices, including cover crop, pre-emergence (PRE) herbicide and no management. The split plots are timing for weed removal at different soybean stages: VE, V2, V4, V6, R2, R5 and harvest. Weed removal is performed with post-emergence herbicide application and hoeing. The experimental unit width is 3m (four soybean rows) and length is 7m. There will be three blocks. The cereal rye cover crop will be drilled in the fall of 2023 and 2024. Soybean planting at 75 cm width will occur in June of 2024 and 2025. Tillage will be performed prior to cover crop and soybean planting. 
+
+
+### Inputs
 
 ```{r}
-#| echo: false
-2 * 2
+tribble(
+  ~Input, ~Product, ~Rate, ~Type, ~Timing,
+  "Cereal rye", "TBD", "67 kg/ha",  "Drill",    "Fall",
+  "Soybean", "TBD", "350,000 kg/ha",  "Planter", "June",
+  "Fertilizer", "TBD", "TDB",  "Broadcast",    "Fall/Spring",
+  "Herbicide",  "Dual II Magnum", "   l/ha", "Pre-emergence", "Up to 3 days after planting",
+  "",  "Roundup", "3 l/ha", "Post-emergence", "At weed removal timing"
+) |> 
+  flextable() |> 
+  autofit() %>% 
+  align(align = "center", part = "all") |> 
+  footnote(i = 1, j = c(1,2),
+            value = as_paragraph(
+              c("Inputs will be based on soil type and local recommendations.",
+                "TDB, to be decided.")
+            ),
+            ref_symbols = c("a", "b"),
+            part = "header")
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+### Treatment labels
+
+
+```{r}
+tribble(
+  ~Management, ~Timing, ~`Block 1`, ~`Block 2`, ~`Block 3`,
+  "Untreated", "V0", "101", "204", "306",
+  "Untreated", "V2", "102", "207", "302",      
+  "Untreated", "V4", "103", "206", "305", 
+  "Untreated", "V6", "104", "203", "307",
+  "Untreated", "R2", "105", "201", "303", 
+  "Untreated", "R5", "106", "205", "304",
+  "Untreated", "Harvest", "107", "205", "301", 
+  "Cover crop", "V0", "108", "213", "304", 
+  "Cover crop", "V2", "109", "214", "302", 
+  "Cover crop", "V4", "110", "210", "305", 
+  "Cover crop", "V6", "111", "203", "306", 
+  "Cover crop", "R2", "112", "211", "303", 
+  "Cover crop", "R5", "113", "212", "301", 
+  "Cover crop", "Harvest", "114", "208", "301", 
+  "PRE", "V0", "101", "115", "316", 
+  "PRE", "V2", "102", "116", "321",     
+  "PRE", "V4", "103", "117", "320", 
+  "PRE", "V6", "104", "118", "315", 
+  "PRE", "R2", "105", "119", "319", 
+  "PRE", "R5", "106", "120", "317", 
+  "PRE", "Harvest", "121", "205", "318"
+) |> 
+  flextable() |> 
+  autofit() %>% 
+  bg(i = 1:7, 
+          part = "body",
+          bg = "beige") |> 
+  bg(i = 8:14, 
+          part = "body",
+          bg = "gold") |> 
+  bg(i = 15:21, 
+          part = "body",
+          bg = "tomato")
+```
+
+### Trial map
+
+The study area is 21 m by 63 m plus borders. 
+
+```{r}
+tribble(
+  ~Block, ~`1`, ~`2`, ~`3`, ~`4`, ~`5`, ~`6`, ~`7`,
+  "Block 3", "315", "316", "317", "318", "319", "320", "321",
+  "",        "308", "309", "310", "311", "312", "313", "314", 
+  "",        "301", "302", "303", "304", "305", "306", "307", 
+  "Block 2", "215", "216", "217", "218", "219", "220", "221",
+  "",        "208", "209", "210", "211", "212", "213", "214",
+  "",        "201", "202", "203", "204", "205", "206", "207", 
+  "Block 1", "115", "116", "117", "118", "119", "120", "121",
+  "",        "108", "109", "110", "111", "112", "113", "114",
+  "",        "101", "102", "103", "104", "105", "106", "107"
+)  |> 
+  flextable() |> 
+  bg(i = c(2,4,8), 
+     j = 2:8,
+          part = "body",
+          bg = "tomato") |> 
+  bg(i = c(1,5,7), 
+     j = 2:8,
+          part = "body",
+          bg = "gold") |> 
+  bg(i = c(3,6,9), 
+     j = 2:8,
+          part = "body",
+          bg = "beige")
+```
+## Data collection
+
+```{r}
+tribble(
+  ~Data, ~Procedure,
+  "Cereal rye biomass", "Cover crop biomass prior to termination",
+  "Weed ID", "Weed ID at each removal timing",
+  "Weed height", "Weed height at each removal timing",
+  "Soybean height", "5 randomly selected soybean plants at each removal timing",
+  "Weed density",   "Weed density at each removal timing",
+  "Weed biomass",   "Weed biomass at each removal timing",
+  "Soybean yield", "Soybean yield at 13% moisture"
+) |> 
+  flextable() |> 
+  autofit() %>% 
+  align(align = "left", part = "all") |> 
+  footnote(i = 1, j = 2,
+            value = as_paragraph(
+              c("Weed density and biomass collected using a quadrat arbitrarialy placed in the center of two soybean rows")
+            ),
+            ref_symbols = c("a"),
+            part = "header")
+```
+### Harvest
+
+Soybean harvest performed at 13% moisture by harvesting the two center rows using a plot harvester. 
+
+
+
+
+## Timeline
+
+### Year 1
+
+This is a tentative timeline for year 1, including the major managament practices.
+
+![Timeline attempt year 1](year1.png){width=650}
+
+
+```{r}
+#| include: false
+tribble(
+  ~id, ~content, ~start, ~end,
+  "1", "Tillage", "2023-10-2", NA,
+  "2", "Fertilizer", "2023-10-4", NA,
+  "3", "Cereal rye", "2023-10-4", "2024-05-25",
+  "4", "Tillage", "2024-05-27", NA,
+  "5", "Fertilizer", "2024-06-01", NA,
+  "6", "Soybean", "2024-06-10", "2024-10-10",
+  "7", "PRE application", "2024-06-11", NA,
+) |> 
+  timevis() -> myTimeLine1
+
+htmlwidgets::saveWidget(myTimeLine1,"myTimeLine1.html")
+```
+
+### Year 2
+
+This is a tentative timeline for year 2, including the major managament practices.
+
+![Timeline attempt year 2](year2.png){width=650}
+
+```{r}
+#| include: false
+tribble(
+  ~id, ~content, ~start, ~end,
+  "1", "Tillage", "2024-10-2", NA,
+  "2", "Fertilizer", "2024-10-4", NA,
+  "3", "Cereal rye", "2024-10-4", "2025-05-25",
+  "4", "Tillage", "2025-05-27", NA,
+  "5", "Fertilizer", "2025-06-01", NA,
+  "6", "Soybean", "2025-06-10", "2025-10-10",
+  "7", "PRE application", "2025-06-11", NA,
+) |> 
+  timevis() -> myTimeLine2
+
+htmlwidgets::saveWidget(myTimeLine2,"myTimeLine2.html")
+```
