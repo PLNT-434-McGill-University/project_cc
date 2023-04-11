@@ -1,0 +1,79 @@
+---
+title: "Swichgrass control"
+author: "Maxwel Coura Oliveira, PhD"
+format: 
+  pdf:
+    include-in-header:
+      - text: |
+          \definecolor{tomato}{HTML}{FF6347}
+          \definecolor{gold}{HTML}{FFD700}
+          \definecolor{offwhite}{HTML}{FAF9F6}
+          \definecolor{beige}{HTML}{F5F5DC}
+          \pagecolor{offwhite}
+    fontfamily: libertinus
+    fontfamilyoptions:
+     - osf
+     - p
+    geometry:
+     - top=30mm
+     - left=20mm
+     - heightrounded
+editor: source
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(flextable)
+library(timevis)
+```
+
+## Objetive
+
+The objective of this study is to control established *Panicum virgatum* L. (swichgrass) in Quebec.
+
+## Methods
+
+### Treatments
+
+```{r}
+tribble(
+  ~trt_number, ~Management, ~Timing, ~`Block 1`, ~`Block 2`, ~`Block 3`,
+  "1", "Mowing fb Glyphosate", "V0", "101", "204", "306",
+  "2", "Untreated", "V2", "102", "202", "301",      
+  "3", "Untreated", "V4", "103", "206", "305", 
+  "4", "Untreated", "V6", "104", "203", "302",
+  "5", "Untreated", "R2", "105", "201", "303", 
+  "6", "Untreated", "R5", "106", "205", "304",
+) |> 
+  flextable() |> 
+  autofit()
+```
+
+
+## Trial map
+
+The study area is 18 m by 19.5 m plus borders. 
+
+```{r}
+tribble(
+  ~Block, ~`1`, ~`2`, ~`3`, ~`4`, ~`5`, ~`6`,
+  "Block 3", "301", "302", "303", "304", "305", "306",
+  "Block 2", "201", "202", "203", "204", "205", "206", 
+  "Block 1", "101", "102", "103", "104", "105", "106"
+)  |> 
+  flextable()
+```
+
+
+
+
+- Chemical
+  - Glyphosa
+  
+- Mowing
+
+- Tillage
